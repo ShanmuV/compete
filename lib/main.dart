@@ -193,3 +193,32 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
+
+class CustomAppBar extends StatelessWidget {
+  const CustomAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset("logo.png", fit: BoxFit.cover),
+            Text("Event Management System", style: TextStyle(fontSize: 30)),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amberAccent,
+                foregroundColor: Colors.black,
+              ),
+              child: Text("Login as a Teacher"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
