@@ -35,40 +35,14 @@ class EventDetailsPage extends StatelessWidget {
                   VerticalDivider(),
                   SizedBox(width: 20),
                   Expanded(
-                    child: Stack(
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              event["eventName"],
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 20),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.amberAccent,
-                              ),
-                              onPressed: () {},
-                              child: Text(
-                                "Register",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Navigator(
+                      onGenerateRoute: (RouteSettings settings) {
+                        return MaterialPageRoute(
+                          builder: (context) {
+                            return EventDetails(event: event);
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -76,6 +50,121 @@ class EventDetailsPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class EventDetails extends StatelessWidget {
+  final Map<String, dynamic> event;
+  const EventDetails({super.key, required this.event});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Column(
+          children: [
+            Text(
+              event["eventName"],
+              style: TextStyle(fontSize: 24, color: Colors.white),
+            ),
+          ],
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 20),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amberAccent,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return EventRegistrationForm();
+                    },
+                  ),
+                );
+              },
+              child: Text(
+                "Register",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class EventRegistrationForm extends StatefulWidget {
+  const EventRegistrationForm({super.key});
+
+  @override
+  State<EventRegistrationForm> createState() => _EventRegistrationFormState();
+}
+
+class _EventRegistrationFormState extends State<EventRegistrationForm> {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            TextField(decoration: InputDecoration(hintText: "Student Name")),
+            SizedBox(height: 10),
+            TextField(decoration: InputDecoration(hintText: "Register No.")),
+            SizedBox(height: 10),
+            DropdownMenu(
+              hintText: "Select Department",
+              width: double.infinity,
+              dropdownMenuEntries: [
+                DropdownMenuEntry(label: "Computer Science", value: "CSE"),
+                DropdownMenuEntry(label: "Mechanical", value: "ME"),
+                DropdownMenuEntry(
+                  label: "Electronics and Communication",
+                  value: "ECE",
+                ),
+                DropdownMenuEntry(label: "Information Technolgy", value: "IT"),
+              ],
+            ),
+            SizedBox(height: 10),
+            DropdownMenu(
+              hintText: "Select Year",
+              width: double.infinity,
+              dropdownMenuEntries: [
+                DropdownMenuEntry(label: "I", value: 1),
+                DropdownMenuEntry(label: "II", value: 2),
+                DropdownMenuEntry(label: "III", value: 3),
+                DropdownMenuEntry(label: "IV", value: 4),
+              ],
+            ),
+            SizedBox(height: 10),
+            DropdownMenu(
+              hintText: "Select Section",
+              width: double.infinity,
+              dropdownMenuEntries: [
+                DropdownMenuEntry(label: "A", value: "A"),
+                DropdownMenuEntry(label: "B", value: "B"),
+                DropdownMenuEntry(label: "C", value: "C"),
+                DropdownMenuEntry(label: "D", value: "D"),
+              ],
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: ElevatedButton(onPressed: () {}, child: Text("Register")),
+            ),
+          ],
+        ),
       ),
     );
   }
