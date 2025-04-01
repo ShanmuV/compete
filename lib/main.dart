@@ -1,3 +1,4 @@
+import 'package:compete/pages/registration_view_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import './extensions/extensions.dart';
@@ -17,7 +18,12 @@ class MyApp extends StatelessWidget {
       scrollBehavior: MaterialScrollBehavior().copyWith(
         dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},
       ),
-      home: HomePage(),
+      home: RegistrationViewPage(
+        event: {
+          "_id": "67e7fad09c1474fe0c4e31af",
+          "eventName": "UTSAV - Code with Comali",
+        },
+      ),
       theme: ThemeData.dark(useMaterial3: true),
     );
   }
