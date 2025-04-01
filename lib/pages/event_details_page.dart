@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:compete/extensions/extensions.dart';
 import 'package:compete/main.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class EventDetailsPage extends StatelessWidget {
   final Map<String, dynamic> event;
@@ -12,6 +15,7 @@ class EventDetailsPage extends StatelessWidget {
       body: Column(
         children: [
           CustomAppBar(),
+          SizedBox(height: 10),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
@@ -84,7 +88,7 @@ class EventDetails extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return EventRegistrationForm();
+                      return EventRegistrationForm(event: event);
                     },
                   ),
                 );
@@ -106,13 +110,51 @@ class EventDetails extends StatelessWidget {
 }
 
 class EventRegistrationForm extends StatefulWidget {
-  const EventRegistrationForm({super.key});
+  final Map<String, dynamic> event;
+  const EventRegistrationForm({super.key, required this.event});
 
   @override
   State<EventRegistrationForm> createState() => _EventRegistrationFormState();
 }
 
 class _EventRegistrationFormState extends State<EventRegistrationForm> {
+  final _studentNameController = TextEditingController();
+  final _regNoController = TextEditingController();
+  final _departmentController = TextEditingController();
+  final _yearController = TextEditingController();
+  final _sectionController = TextEditingController();
+
+  Future<void> register() async {
+    final response = await http.post(
+      Uri.parse("http://127.0.0.1:5000/register"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "eventID": widget.event["_id"],
+        "studentName": _studentNameController.text,
+        "regNo": int.parse(_regNoController.text),
+        "department": _departmentController.text,
+        "year": _yearController.text,
+        "section": _sectionController.text,
+      }),
+    );
+    if (response.statusCode == 200) {
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Registered Successfully",
+              style: TextStyle(color: Colors.black),
+            ),
+            backgroundColor: Colors.amberAccent,
+          ),
+        );
+      }
+    } else {
+      debugPrint("Error with the registration request");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -120,11 +162,19 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            TextField(decoration: InputDecoration(hintText: "Student Name")),
+            TextField(
+              controller: _studentNameController,
+              decoration: InputDecoration(hintText: "Student Name"),
+            ),
             SizedBox(height: 10),
-            TextField(decoration: InputDecoration(hintText: "Register No.")),
+            TextField(
+              controller: _regNoController,
+              decoration: InputDecoration(hintText: "Register No."),
+              keyboardType: TextInputType.number,
+            ),
             SizedBox(height: 10),
             DropdownMenu(
+              controller: _departmentController,
               hintText: "Select Department",
               width: double.infinity,
               dropdownMenuEntries: [
@@ -139,6 +189,7 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
             ),
             SizedBox(height: 10),
             DropdownMenu(
+              controller: _yearController,
               hintText: "Select Year",
               width: double.infinity,
               dropdownMenuEntries: [
@@ -150,6 +201,7 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
             ),
             SizedBox(height: 10),
             DropdownMenu(
+              controller: _sectionController,
               hintText: "Select Section",
               width: double.infinity,
               dropdownMenuEntries: [
@@ -161,7 +213,10 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
             ),
             SizedBox(height: 10),
             Center(
-              child: ElevatedButton(onPressed: () {}, child: Text("Register")),
+              child: ElevatedButton(
+                onPressed: register,
+                child: Text("Register"),
+              ),
             ),
           ],
         ),
