@@ -15,6 +15,7 @@ class EventDetailsPage extends StatelessWidget {
       body: Column(
         children: [
           CustomAppBar(),
+          SizedBox(height: 10),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
