@@ -157,70 +157,88 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _studentNameController,
-              decoration: InputDecoration(hintText: "Student Name"),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _regNoController,
-              decoration: InputDecoration(hintText: "Register No."),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 10),
-            DropdownMenu(
-              controller: _departmentController,
-              hintText: "Select Department",
-              width: double.infinity,
-              dropdownMenuEntries: [
-                DropdownMenuEntry(label: "Computer Science", value: "CSE"),
-                DropdownMenuEntry(label: "Mechanical", value: "ME"),
-                DropdownMenuEntry(
-                  label: "Electronics and Communication",
-                  value: "ECE",
-                ),
-                DropdownMenuEntry(label: "Information Technolgy", value: "IT"),
-              ],
-            ),
-            SizedBox(height: 10),
-            DropdownMenu(
-              controller: _yearController,
-              hintText: "Select Year",
-              width: double.infinity,
-              dropdownMenuEntries: [
-                DropdownMenuEntry(label: "I", value: 1),
-                DropdownMenuEntry(label: "II", value: 2),
-                DropdownMenuEntry(label: "III", value: 3),
-                DropdownMenuEntry(label: "IV", value: 4),
-              ],
-            ),
-            SizedBox(height: 10),
-            DropdownMenu(
-              controller: _sectionController,
-              hintText: "Select Section",
-              width: double.infinity,
-              dropdownMenuEntries: [
-                DropdownMenuEntry(label: "A", value: "A"),
-                DropdownMenuEntry(label: "B", value: "B"),
-                DropdownMenuEntry(label: "C", value: "C"),
-                DropdownMenuEntry(label: "D", value: "D"),
-              ],
-            ),
-            SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: register,
-                child: Text("Register"),
-              ),
-            ),
-          ],
+    return Column(
+      children: [
+        Text(
+          widget.event["eventName"],
+          style: TextStyle(fontSize: 25),
+          textAlign: TextAlign.center,
         ),
-      ),
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _studentNameController,
+                  decoration: InputDecoration(hintText: "Student Name"),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: _regNoController,
+                  decoration: InputDecoration(hintText: "Register No."),
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 10),
+                DropdownMenu(
+                  controller: _departmentController,
+                  hintText: "Select Department",
+                  width: double.infinity,
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(label: "Computer Science", value: "CSE"),
+                    DropdownMenuEntry(label: "Mechanical", value: "ME"),
+                    DropdownMenuEntry(
+                      label: "Electronics and Communication",
+                      value: "ECE",
+                    ),
+                    DropdownMenuEntry(
+                      label: "Information Technolgy",
+                      value: "IT",
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                DropdownMenu(
+                  controller: _yearController,
+                  hintText: "Select Year",
+                  width: double.infinity,
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(label: "I", value: 1),
+                    DropdownMenuEntry(label: "II", value: 2),
+                    DropdownMenuEntry(label: "III", value: 3),
+                    DropdownMenuEntry(label: "IV", value: 4),
+                  ],
+                ),
+                SizedBox(height: 10),
+                DropdownMenu(
+                  controller: _sectionController,
+                  hintText: "Select Section",
+                  width: double.infinity,
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(label: "A", value: "A"),
+                    DropdownMenuEntry(label: "B", value: "B"),
+                    DropdownMenuEntry(label: "C", value: "C"),
+                    DropdownMenuEntry(label: "D", value: "D"),
+                  ],
+                ),
+                SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amberAccent,
+                      foregroundColor: Colors.black,
+                    ),
+                    onPressed: register,
+                    child: Text("Register"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
