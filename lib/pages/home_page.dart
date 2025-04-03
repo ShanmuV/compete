@@ -3,6 +3,7 @@ import 'package:compete/main.dart';
 import 'package:compete/pages/event_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'dart:convert';
 
@@ -191,7 +192,11 @@ class _EventListWidgetState extends State<EventListWidget> {
                                     ],
                                   ),
                                   Text(
-                                    _events[index]["eventDate"]!,
+                                    DateFormat('MMMM d, y').format(
+                                      DateTime.parse(
+                                        _events[index]["eventDate"]!,
+                                      ),
+                                    ),
                                     style: TextStyle(fontSize: 12),
                                   ),
                                 ],

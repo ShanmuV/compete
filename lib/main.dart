@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:compete/backend/auth_provider.dart';
 import 'package:compete/pages/event_creation_page.dart';
+import 'package:compete/pages/admin_login_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       scrollBehavior: MaterialScrollBehavior().copyWith(
         dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},
       ),
-      home: EventCreationPage(),
+      home: HomePage(),
       theme: ThemeData.dark(useMaterial3: true),
     );
   }
@@ -219,125 +219,47 @@ class CustomAppBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset("logo.png", fit: BoxFit.cover),
-            Text("Event Management System", style: TextStyle(fontSize: 30)),
+            Text(
+              "Event Management System",
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
             isAdmin
-                ? ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amberAccent,
-                    foregroundColor: Colors.black,
+                ? SizedBox(
+                  height: 35,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (contex) => EventCreationPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amberAccent,
+                      foregroundColor: Colors.black,
+                    ),
+                    child: Text("Create a new Event"),
                   ),
-                  child: Text("Create a new Event"),
                 )
-                : ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => AdminLogin()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amberAccent,
-                    foregroundColor: Colors.black,
+                : SizedBox(
+                  height: 35,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AdminLoginPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amberAccent,
+                      foregroundColor: Colors.black,
+                    ),
+                    child: Text("Login as a Teacher"),
                   ),
-                  child: Text("Login as a Teacher"),
                 ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class AdminLogin extends StatefulWidget {
-  const AdminLogin({super.key});
-
-  @override
-  State<AdminLogin> createState() => _AdminLoginState();
-}
-
-class _AdminLoginState extends State<AdminLogin> {
-  final _username = TextEditingController();
-  final _password = TextEditingController();
-
-  Future<void> login() async {
-    try {
-      final res = await http.post(
-        Uri.parse("http://127.0.0.1:5000/login"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "username": _username.text,
-          "password": _password.text,
-        }),
-      );
-      if (res.statusCode == 200) {
-        if (mounted) {
-          Provider.of<AuthProvider>(context).setAdmin(true);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        }
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          width: context.percentWidth(.2),
-          height: context.percentHeight(.3),
-          padding: EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.amberAccent),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                child: Text(
-                  "LOGIN",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextField(
-                controller: _username,
-                decoration: InputDecoration(hintText: "Username"),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _password,
-                obscureText: true,
-                decoration: InputDecoration(hintText: "Password"),
-              ),
-              SizedBox(height: 10),
-              SizedBox(
-                height: 50,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Provider.of<AuthProvider>(
-                      context,
-                      listen: false,
-                    ).setAdmin(true);
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (context) => HomePage()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amberAccent,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: Text("Login"),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

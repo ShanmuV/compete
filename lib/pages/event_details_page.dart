@@ -65,14 +65,26 @@ class EventDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> desc = event["eventDescription"].split("\n");
+    double fontSizeForDesc = 30;
     return Stack(
       children: [
         Column(
           children: [
             Text(
               event["eventName"],
-              style: TextStyle(fontSize: 24, color: Colors.white),
+              style: TextStyle(fontSize: 35, color: Colors.amberAccent),
             ),
+            SizedBox(height: 15),
+            ...desc.map((item) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item, style: TextStyle(fontSize: fontSizeForDesc -= 2)),
+                  SizedBox(height: 10),
+                ],
+              );
+            }),
           ],
         ),
         Align(
@@ -159,10 +171,38 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          widget.event["eventName"],
-          style: TextStyle(fontSize: 25),
-          textAlign: TextAlign.center,
+        Container(
+          color: Colors.teal,
+          child: SizedBox(
+            width: double.infinity,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    widget.event["eventName"],
+                    style: TextStyle(fontSize: 35, color: Colors.amberAccent),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => EventDetails(event: widget.event),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.arrow_back),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         SingleChildScrollView(
           child: Padding(
