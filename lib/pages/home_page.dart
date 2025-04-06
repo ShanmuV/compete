@@ -1,6 +1,7 @@
 import 'package:compete/extensions/extensions.dart';
 import 'package:compete/main.dart';
 import 'package:compete/pages/event_details_page.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -15,6 +16,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      final notification = message.notification;
+      if (notification != null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(notification.title ?? "New Notification")),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +61,39 @@ class CalendarWidget extends StatefulWidget {
 }
 
 class _CalendarWidgetState extends State<CalendarWidget> {
+  Map<DateTime, List<String>> _events = {};
+
+  DateTime normalizeDate(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  Future<void> fetchEventData() async {
+    final url = Uri.parse("http://127.0.0.1:5000/events");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      setState(() {
+        final eventJSON = json.decode(response.body);
+        for (var item in eventJSON) {
+          DateTime? date = normalizeDate(DateTime.parse(item["eventDate"]));
+          if (_events[date] != null) {
+            _events[date]!.add(item["eventName"]);
+          } else {
+            _events[date] = [item["eventName"]];
+          }
+        }
+        debugPrint(_events.toString());
+      });
+    } else {
+      debugPrint("Error occured while fecthing events");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEventData();
+  }
+
   DateTime _focusedDay = DateTime.now();
 
   DateTime? _selectedDay;
@@ -59,6 +107,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         focusedDay: _focusedDay,
         firstDay: DateTime(_focusedDay.year, _focusedDay.month - 1, 1),
         lastDay: DateTime(_focusedDay.year, _focusedDay.month + 1, 1),
+        eventLoader: (day) => _events[day] ?? [],
         onDaySelected:
             (selectedDay, focusedDay) => {
               setState(() {
@@ -72,13 +121,44 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           titleCentered: true,
         ),
         calendarStyle: CalendarStyle(
+          markerDecoration: BoxDecoration(
+            color: Colors.red,
+            shape: BoxShape.circle,
+          ),
           todayDecoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.amberAccent,
           ),
+          selectedDecoration: BoxDecoration(
+            color: Colors.green,
+            shape: BoxShape.circle,
+          ),
           defaultTextStyle: TextStyle(color: Colors.white),
           weekendTextStyle: TextStyle(color: Colors.amberAccent[100]),
           outsideTextStyle: TextStyle(color: Colors.white70),
+        ),
+        calendarBuilders: CalendarBuilders(
+          defaultBuilder: (context, day, focusedDay) {
+            final normalizedDay = normalizeDate(day);
+            if (_events[normalizedDay] != null &&
+                _events[normalizedDay]!.isNotEmpty) {
+              debugPrint("Day : $day");
+              return Container(
+                margin: EdgeInsets.all(6.0),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withAlpha(150),
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: Center(
+                  child: Text(
+                    '${day.day}',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              );
+            }
+            return null;
+          },
         ),
       ),
     );
@@ -102,7 +182,6 @@ class _EventListWidgetState extends State<EventListWidget> {
     if (response.statusCode == 200) {
       setState(() {
         _events = json.decode(response.body);
-        debugPrint(_events.toString());
       });
     } else {
       setState(() {

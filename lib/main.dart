@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:compete/backend/auth_provider.dart';
+import 'package:compete/notifcations.dart';
 import 'package:compete/pages/event_creation_page.dart';
 import 'package:compete/pages/admin_login_page.dart';
 import 'package:flutter/gestures.dart';
@@ -7,9 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './extensions/extensions.dart';
 import './pages/home_page.dart';
-import 'package:http/http.dart' as http;
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  requestNotificationPermission();
   runApp(
     ChangeNotifierProvider(
       create: (context) => AuthProvider(),
@@ -25,9 +30,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      scrollBehavior: MaterialScrollBehavior().copyWith(
-        dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},
-      ),
       home: HomePage(),
       theme: ThemeData.dark(useMaterial3: true),
     );

@@ -46,3 +46,5 @@ app.*.map.json
 
 # Node modules
 /lib/backend/node_modules/
+
+/lib/backend/env/

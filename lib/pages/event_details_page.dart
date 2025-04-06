@@ -186,7 +186,7 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
                   ),
                 ),
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment(-1, .6),
                   child: IconButton(
                     onPressed: () {
                       Navigator.push(
