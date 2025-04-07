@@ -226,23 +226,41 @@ class CustomAppBar extends StatelessWidget {
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             isAdmin
-                ? SizedBox(
-                  height: 35,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (contex) => EventCreationPage(),
+                ? Row(
+                  children: [
+                    SizedBox(
+                      height: 35,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (contex) => EventCreationPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amberAccent,
+                          foregroundColor: Colors.black,
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amberAccent,
-                      foregroundColor: Colors.black,
+                        child: Text("Create a new Event"),
+                      ),
                     ),
-                    child: Text("Create a new Event"),
-                  ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Provider.of<AuthProvider>(
+                          context,
+                          listen: false,
+                        ).setAdmin(false);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amberAccent,
+                        foregroundColor: Colors.black,
+                      ),
+                      child: Text("Log out"),
+                    ),
+                  ],
                 )
                 : SizedBox(
                   height: 35,

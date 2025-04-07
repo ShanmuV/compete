@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:compete/backend/auth_provider.dart';
 import 'package:compete/extensions/extensions.dart';
 import 'package:compete/main.dart';
+import 'package:compete/pages/registration_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class EventDetailsPage extends StatelessWidget {
   final Map<String, dynamic> event;
@@ -87,35 +90,100 @@ class EventDetails extends StatelessWidget {
             }),
           ],
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 20),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amberAccent,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return EventRegistrationForm(event: event);
-                    },
+        if (!Provider.of<AuthProvider>(context).isAdmin)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 20),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amberAccent,
                   ),
-                );
-              },
-              child: Text(
-                "Register",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return EventRegistrationForm(event: event);
+                        },
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "Register",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
                 ),
               ),
             ),
+          )
+        else
+          Positioned(
+            bottom: 10,
+            left: 10,
+            right: 10,
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amberAccent,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return EventRegistrationForm(event: event);
+                          },
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Register",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amberAccent,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return RegistrationViewPage(event: event);
+                          },
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Check Registration List",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
@@ -171,37 +239,33 @@ class _EventRegistrationFormState extends State<EventRegistrationForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          color: Colors.teal,
-          child: SizedBox(
-            width: double.infinity,
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    widget.event["eventName"],
-                    style: TextStyle(fontSize: 35, color: Colors.amberAccent),
-                    textAlign: TextAlign.center,
-                  ),
+        SizedBox(
+          width: double.infinity,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  widget.event["eventName"],
+                  style: TextStyle(fontSize: 35, color: Colors.amberAccent),
+                  textAlign: TextAlign.center,
                 ),
-                Align(
-                  alignment: Alignment(-1, .6),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => EventDetails(event: widget.event),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.arrow_back),
-                  ),
+              ),
+              Positioned(
+                left: 10,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EventDetails(event: widget.event),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.arrow_back),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         SingleChildScrollView(

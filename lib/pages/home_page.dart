@@ -63,7 +63,8 @@ class CalendarWidget extends StatefulWidget {
 class _CalendarWidgetState extends State<CalendarWidget> {
   Map<DateTime, List<String>> _events = {};
 
-  DateTime normalizeDate(DateTime date) {
+  DateTime normalizeDate(DateTime? date) {
+    if (date == null) return DateTime.now();
     return DateTime(date.year, date.month, date.day);
   }
 
@@ -99,67 +100,94 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   DateTime? _selectedDay;
   @override
   Widget build(BuildContext context) {
+    DateTime normalizedSelectedDay = normalizeDate(_selectedDay);
     return Container(
       margin: EdgeInsets.all(20),
       width: 500,
       height: 500,
-      child: TableCalendar(
-        focusedDay: _focusedDay,
-        firstDay: DateTime(_focusedDay.year, _focusedDay.month - 1, 1),
-        lastDay: DateTime(_focusedDay.year, _focusedDay.month + 1, 1),
-        eventLoader: (day) => _events[day] ?? [],
-        onDaySelected:
-            (selectedDay, focusedDay) => {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              }),
-            },
-        selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-        headerStyle: HeaderStyle(
-          formatButtonVisible: false,
-          titleCentered: true,
-        ),
-        calendarStyle: CalendarStyle(
-          markerDecoration: BoxDecoration(
-            color: Colors.red,
-            shape: BoxShape.circle,
+      child: Column(
+        children: [
+          TableCalendar(
+            focusedDay: _focusedDay,
+            firstDay: DateTime(_focusedDay.year, _focusedDay.month - 1, 1),
+            lastDay: DateTime(_focusedDay.year, _focusedDay.month + 1, 1),
+            onDaySelected:
+                (selectedDay, focusedDay) => {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    normalizedSelectedDay = normalizedSelectedDay;
+                  }),
+                },
+            selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+            ),
+            calendarStyle: CalendarStyle(
+              markerDecoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              todayDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.amberAccent,
+              ),
+              selectedDecoration: BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+              ),
+              defaultTextStyle: TextStyle(color: Colors.white),
+              weekendTextStyle: TextStyle(color: Colors.amberAccent[100]),
+              outsideTextStyle: TextStyle(color: Colors.white70),
+            ),
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, day, focusedDay) {
+                final normalizedDay = normalizeDate(day);
+                if (_events[normalizedDay] != null &&
+                    _events[normalizedDay]!.isNotEmpty) {
+                  debugPrint("Day : $day");
+                  return Container(
+                    margin: EdgeInsets.all(6.0),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withAlpha(150),
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${day.day}',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  );
+                }
+                return null;
+              },
+            ),
           ),
-          todayDecoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.amberAccent,
-          ),
-          selectedDecoration: BoxDecoration(
-            color: Colors.green,
-            shape: BoxShape.circle,
-          ),
-          defaultTextStyle: TextStyle(color: Colors.white),
-          weekendTextStyle: TextStyle(color: Colors.amberAccent[100]),
-          outsideTextStyle: TextStyle(color: Colors.white70),
-        ),
-        calendarBuilders: CalendarBuilders(
-          defaultBuilder: (context, day, focusedDay) {
-            final normalizedDay = normalizeDate(day);
-            if (_events[normalizedDay] != null &&
-                _events[normalizedDay]!.isNotEmpty) {
-              debugPrint("Day : $day");
-              return Container(
-                margin: EdgeInsets.all(6.0),
-                decoration: BoxDecoration(
-                  color: Colors.amber.withAlpha(150),
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-                child: Center(
-                  child: Text(
-                    '${day.day}',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              );
-            }
-            return null;
-          },
-        ),
+          if (_events[normalizedSelectedDay] != null) ...<Widget>[
+            Divider(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _events[normalizeDate(_selectedDay!)]!.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text(
+                        _events[normalizedSelectedDay]![index],
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

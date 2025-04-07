@@ -45,17 +45,32 @@ class _RegistrationViewPageState extends State<RegistrationViewPage> {
               ? Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CustomAppBar(),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
-                    child: Text(
-                      "Registrations for ${widget.event["eventName"]}",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Registrations for ${widget.event["eventName"]}",
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Positioned(
+                          left: 10,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            icon: Icon(Icons.arrow_back),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
